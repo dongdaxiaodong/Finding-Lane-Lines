@@ -15,42 +15,36 @@ To complete the project, two files will be submitted: a file containing project 
 To meet specifications in the project, take a look at the requirements in the [project rubric](https://review.udacity.com/#!/rubrics/322/view)
 
 
-Creating a Great Writeup
----
-For this project, a great writeup should provide a detailed response to the "Reflection" section of the [project rubric](https://review.udacity.com/#!/rubrics/322/view). There are three parts to the reflection:
+[//]: # (Image References)
 
-1. Describe the pipeline
+[image1]: ./test_images_output/solidWhiteCurve_annotated.jpg "solidWhiteCurve_processed"
+[image2]: ./test_images_output/solidYellowCurve_annotated.jpg "solidYellowCurve_processed"
 
-2. Identify any shortcomings
+### 1. Below are the steps included in my pipeline :-
+1. Identify the lane line color(can be yellow or white). So that based on the color(if yellow) we apply HSV(Hue Saturation value). HSV actually separates each color from other colors. 
+2. The given image has to be converted into grayscale(which has only 1 channel). Grayscale images are faster to do processing.
+3. Apply Gaussian Blur to reduce noise and make that image smoothie. Gaussian Blur takes one more required parameter called Kernel. The higher the kernel value the greater the blur effect on image. Kernel value only accept odd number(eg. 1, 3, 5, 7).
+4. Apply Canny Edge detection algorithm so that we can detect edges of both the lanes and when the pixel value changes rapidly then only we will be able to find the strong edges. Canny algorithm takes two extra parameters called low_threshold and high_threshold in a ratio of 1:2 or 1:3.
+5. Now lets get only the edges in Region of Interest(ROI). We will draw a ROI around the lanes from the bottom of the image to the little more mid of the image.
+6. Based on the edges we got from ROI, we apply Hough Transform line detection algorithm to detect line in edges images. It has several parameters to tune 
+    - rho – Distance resolution of the accumulator in pixels.
+    - theta – Angle resolution of the accumulator in radians.
+    - threshold – Accumulator threshold parameter. Only those lines are returned that get enough votes (> `threshold`).
+    - minLineLength – Minimum line length. Line segments shorter than that are rejected.
+    - maxLineGap – Maximum allowed gap between points on the same line to link them.
+7. Output of Hough Transform line algorithm is list of lines and next step is to Draw line on image
+8.  I observe that there are multiple lines detected for Lane, We need it be single averaged line. Also for some lane are partially recognized.
+9.  For Averaging and extrapolating Lines - Separate positive slope line (Right lane) and negative slope line (Left line) and average them using new draw_lane_lines function, which separates left lane lines and right lane lines where ever we see dashed lane lines. Also draw_lane_lines function convert slope and intercept into pixel points. Finally draw_lane_lines function which take those list of lines which in form of pixel points and draw averaged and extrapolated lanes on image. 
 
-3. Suggest possible improvements
+![alt text][image1]
+![alt text][image2]
 
-We encourage using images in your writeup to demonstrate how your pipeline works.  
+- Same pipeline is applied on video clips and images out put stored in output files folder for reference and my p1.ipynb file has clear info for reference.
 
-All that said, please be concise!  We're not looking for you to write a book here: just a brief description.
+### 2. Identify potential shortcomings with your current pipeline
 
-You're not required to use markdown for your writeup.  If you use another method please just submit a pdf of your writeup. Here is a link to a [writeup template file](https://github.com/udacity/CarND-LaneLines-P1/blob/master/writeup_template.md). 
+As of the current test images, the images has a day light and good weather. This pipeline will definitely fails in the night lighting and also in bad weather and where ever there is huge curves on roads.
 
+### 3. Suggest possible improvements to your pipeline
 
-The Project
----
-
-## If you have already installed the [CarND Term1 Starter Kit](https://github.com/udacity/CarND-Term1-Starter-Kit/blob/master/README.md) you should be good to go!   If not, you should install the starter kit to get started on this project. ##
-
-**Step 1:** Set up the [CarND Term1 Starter Kit](https://classroom.udacity.com/nanodegrees/nd013/parts/fbf77062-5703-404e-b60c-95b78b2f3f9e/modules/83ec35ee-1e02-48a5-bdb7-d244bd47c2dc/lessons/8c82408b-a217-4d09-b81d-1bda4c6380ef/concepts/4f1870e0-3849-43e4-b670-12e6f2d4b7a7) if you haven't already.
-
-**Step 2:** Open the code in a Jupyter Notebook
-
-You will complete the project code in a Jupyter notebook.  If you are unfamiliar with Jupyter Notebooks, check out <A HREF="https://www.packtpub.com/books/content/basics-jupyter-notebook-and-python" target="_blank">Cyrille Rossant's Basics of Jupyter Notebook and Python</A> to get started.
-
-Jupyter is an Ipython notebook where you can run blocks of code and see results interactively.  All the code for this project is contained in a Jupyter notebook. To start Jupyter in your browser, use terminal to navigate to your project directory and then run the following command at the terminal prompt (be sure you've activated your Python 3 carnd-term1 environment as described in the [CarND Term1 Starter Kit](https://github.com/udacity/CarND-Term1-Starter-Kit/blob/master/README.md) installation instructions!):
-
-`> jupyter notebook`
-
-A browser window will appear showing the contents of the current directory.  Click on the file called "P1.ipynb".  Another browser window will appear displaying the notebook.  Follow the instructions in the notebook to complete the project.  
-
-**Step 3:** Complete the project and submit both the Ipython notebook and the project writeup
-
-## How to write a README
-A well written README file can enhance your project and portfolio.  Develop your abilities to create professional README files by completing [this free course](https://www.udacity.com/course/writing-readmes--ud777).
-
+I need to test with some other road lane images in different conditions and improve algorithm based on results it show.
